@@ -398,7 +398,8 @@ public class AgentToolsController {
                 catalogService.isGlobal(agentId)
                         ? userId
                         : catalogService.findOwnerOf(agentId).orElse(userId);
-        return agent.workspaceFor(ctxUser, null);
+//        return agent.workspaceFor(ctxUser, null);
+        return agent.getWorkspaceManager();
     }
 
     private static List<McpCatalogEntry> loadMcpCatalog() {
