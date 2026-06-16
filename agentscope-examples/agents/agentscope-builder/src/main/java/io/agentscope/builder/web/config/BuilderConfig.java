@@ -26,6 +26,7 @@ import io.agentscope.core.state.InMemoryAgentStateStore;
 import io.agentscope.extensions.mysql.store.JdbcStore;
 import io.agentscope.harness.agent.IsolationScope;
 import io.agentscope.harness.agent.filesystem.remote.store.BaseStore;
+import io.agentscope.harness.agent.filesystem.spec.LocalFilesystemSpec;
 import io.agentscope.harness.agent.filesystem.spec.RemoteFilesystemSpec;
 import io.agentscope.harness.agent.gateway.channel.ChannelConfig;
 import io.agentscope.harness.agent.gateway.channel.DmScope;
@@ -211,17 +212,11 @@ public class BuilderConfig {
         }
 
         builder.configureAllAgents(
-                b -> {
-                    b.middleware(new ToolNotificationMiddleware(toolEventBus));
-                    b.stateStore(stateStore);
-                    // `activity/` is routed to the shared BaseStore so the per-agent audit log
-                    // (written by AgentActivityStore) is visible across pods, not pinned to the
-                    // local disk of whichever pod served the write.
-                    b.filesystem(
-                            new RemoteFilesystemSpec(baseStore)
-                                    .isolationScope(IsolationScope.USER)
-                                    .addSharedPrefix("activity/"));
-                });
+            b -> {
+                b.middleware(new ToolNotificationMiddleware(toolEventBus));
+//                    b.stateStore(stateStore);
+                b.filesystem(new LocalFilesystemSpec());
+            });
 
         BuilderBootstrap bootstrap = builder.build();
 
